@@ -1,4 +1,3 @@
-# syntax=docker/dockerfile:1
 # Build stage
 FROM docker.io/library/golang:1.25-alpine3.22 AS build-env
 
@@ -20,7 +19,7 @@ WORKDIR ${GOPATH}/src/code.gitea.io/gitea
 # Use COPY but not "mount" because some directories like "node_modules" contain platform-depended contents and these directories need to be ignored.
 # ".git" directory will be mounted later separately for getting version data.
 # TODO: in the future, maybe we can pre-build the frontend assets on one platform and share them for different platforms, the benefit is that it won't be affected by webpack plugin compatibility problems, then the working directory can be fully mounted and the COPY is not needed.
-COPY --exclude=.git/ . .
+COPY . .
 
 # Build gitea, .git mount is required for version data
 RUN --mount=type=cache,target=/go/pkg/mod \

@@ -1,0 +1,9 @@
+# 基于已有的latest镜像，只替换gitea二进制
+FROM gitea/gitea:latest
+
+# 复制本地编译的gitea二进制（使用!来覆盖dockerignore）
+COPY !gitea /usr/local/bin/gitea 2>/dev/null || \
+    ADD --chmod=755 https://github.com/go-gitea/gitea/releases/download/v1.26.0-rc2/gitea-1.26.0-rc2-linux-amd6464 /usr/local/bin/gitea
+
+# 确保可执行权限
+RUN chmod +x /usr/local/bin/gitea

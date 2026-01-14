@@ -1,0 +1,37 @@
+version: "3.8"
+
+services:
+  gitea:
+    image: gitea/gitea:latest
+    container_name: gitea
+    restart: unless-stopped
+    ports:
+      - "2222:22"
+    environment:
+      - USER_UID=1000
+      - USER_GID=1000
+    volumes:
+      - ./data:/data
+      - ./custom/conf/app.ini:/data/gitea/conf/app.ini:ro
+    networks:
+      - gitea-network
+    # 只在内网暴露3000端口，不直接暴露到宿主机
+    expose:
+      - "3000"
+
+  nginx:
+    image: nginx:alpine
+    container_name: gitea-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - gitea-network
+    depends_on:
+      - gitea
+
+networks:
+  gitea-network:
+    driver: bridge
