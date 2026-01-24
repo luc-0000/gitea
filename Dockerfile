@@ -70,11 +70,12 @@ RUN addgroup \
 COPY --from=build-env /tmp/local /
 COPY --from=build-env /go/src/code.gitea.io/gitea/gitea /app/gitea/gitea
 
-# 复制 custom 目录（包含自定义模板和配置）
-COPY custom /data/gitea
+# 复制 custom 目录到不会被挂载覆盖的位置
+# /data 会被挂载覆盖，但 /app 不会，所以配置和模板不会被覆盖
+COPY custom /app/gitea/custom
 
 ENV USER=git
-ENV GITEA_CUSTOM=/data/gitea
+ENV GITEA_CUSTOM=/app/gitea/custom
 
 VOLUME ["/data"]
 
